@@ -27,10 +27,10 @@ import scala.io.Source
 object readuniontest {
  def main(args: Array[String]): Unit = {
 
-   if(args.length <3) {
-	println("arguments less than 3")
-	System.exit(1);
-    }
+//   if(args.length <3) {
+//	println("arguments less than 3")
+//	System.exit(1);
+//    }
     var logger = LoggerFactory.getLogger(getClass)    
     var filepath = args(0)
     // var input = args(1)
