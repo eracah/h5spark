@@ -24,7 +24,7 @@ import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext._
 import org.apache.spark.mllib.linalg.DenseVector
 import scala.io.Source
-object readtest {
+object readuniontest {
  def main(args: Array[String]): Unit = {
 
    if(args.length <3) {
