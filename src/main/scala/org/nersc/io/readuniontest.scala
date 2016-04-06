@@ -23,6 +23,7 @@ import org.apache.spark.SparkContext
 import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext._
 import org.apache.spark.mllib.linalg.DenseVector
+import scala.io.Source
 object readtest {
  def main(args: Array[String]): Unit = {
 
@@ -31,19 +32,30 @@ object readtest {
 	System.exit(1);
     }
     var logger = LoggerFactory.getLogger(getClass)    
-    var partition = args(0).toInt
-    var input = args(1)
-    var variable = args(2)
+    var filepath = args(0)
+    // var input = args(1)
+    //var variable = args(2)
     
     val sparkConf = new SparkConf().setAppName("h5spark-scala")
     val sc =new SparkContext(sparkConf)
 
-    val rdd = read.h5read (sc,input,variable,partition)
+
+
+    val lines = Source.fromFile(filepath).getLines.toArray
+    val params1 = lines(0).split(" ")
+    var rdd = read.h5read (sc,params1(0),params1(1),params1(2).toLong)
+    for (i <- 1 to lines.length -1) {
+      val params = lines(i).split(" ")
+      val rdd_temp = read.h5read (sc,params(0),params(1),params(2).toLong)
+      rdd = rdd.union(rdd_temp)
+    }
+
     rdd.cache()
+    println(rdd.take(1))
     val count= rdd.count()
     logger.info("\nRDD_Count: "+count+" , Total number of rows of all hdf5 files\n")
     logger.info("\nRDD_First: ")
-    rdd.take(1)(0).toArray.foreach(println)
+    //rdd.take(1)(0).toArray.foreach(println)
     sc.stop()
   }
 
