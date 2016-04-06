@@ -53,7 +53,7 @@ object readuniontest {
 
     rdd.cache()
     val irow = rdd.zipWithIndex().map( k  => (k._1, k._2)).map(k => new IndexedRow(k._2, k._1))
-    val imat = IndexedRowMatrix(irow)
+    val imat = new IndexedRowMatrix(irow)
 
     val count= imat.rows.count()
     val first = imat.rows.take(1)
