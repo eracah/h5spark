@@ -24,6 +24,7 @@ import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext._
 import org.apache.spark.mllib.linalg.DenseVector
 import scala.io.Source
+import org.apache.spark.mllib.linalg.distributed.{IndexedRow, IndexedRowMatrix}
 object readuniontest {
  def main(args: Array[String]): Unit = {
 
@@ -51,10 +52,16 @@ object readuniontest {
     }
 
     rdd.cache()
-    println(rdd.take(1))
-    val count= rdd.count()
+    val irow = rdd.zipWithIndex().map( k  => (k._1, k._2)).map(k => new IndexedRow(k._2, k._1))
+    val imat = IndexedRowMatrix(irow)
+
+    val count= imat.rows.count()
+    val first = imat.rows.take(1)
+    val n_rows = imat.numRows()
+    val n_cols = imat.numCols()
     logger.info("\nRDD_Count: "+count+" , Total number of rows of all hdf5 files\n")
-    logger.info("\nRDD_First: ")
+    logger.info("\nRDD_First: " + first)
+    logger.info("\nNum cols : " + n_cols + "Num rows : " + n_rows)
     //rdd.take(1)(0).toArray.foreach(println)
     sc.stop()
   }
